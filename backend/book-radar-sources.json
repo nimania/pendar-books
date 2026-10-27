@@ -1,0 +1,189 @@
+{
+  "version": 3,
+  "sources": [
+    {
+      "id": "taaghche",
+      "name_fa": "طاقچه",
+      "kind": "store",
+      "adapter": "taaghche",
+      "url": "https://taaghche.com/"
+    },
+    {
+      "id": "ketabrah",
+      "name_fa": "کتابراه",
+      "kind": "store",
+      "adapter": "ketabrah",
+      "url": "https://ketabrah.com/"
+    },
+    {
+      "id": "digikala",
+      "name_fa": "دیجی‌کالا",
+      "kind": "store",
+      "adapter": "digikala",
+      "url": "https://www.digikala.com/search/?q=کتاب",
+      "endpoint": "https://digikala-mcp.mmdju.workers.dev/mcp"
+    },
+    {
+      "id": "fidibo",
+      "name_fa": "فیدیبو",
+      "kind": "store",
+      "adapter": "fidibo",
+      "url": "https://fidibo.com/ebooks",
+      "extra_url": "https://fidibo.com/"
+    },
+    {
+      "id": "divar",
+      "name_fa": "دیوار",
+      "kind": "classifieds",
+      "adapter": "divar",
+      "url": "https://divar.ir/s/iran/book-student-literature",
+      "endpoint": "https://divar-mcp.mmdju2.workers.dev/mcp",
+      "cities": [
+        "876",
+        "877",
+        "878",
+        "879",
+        "880",
+        "881",
+        "882",
+        "883",
+        "884",
+        "885",
+        "886",
+        "887",
+        "888",
+        "889",
+        "890",
+        "891",
+        "892",
+        "893",
+        "894",
+        "895",
+        "896",
+        "897",
+        "898",
+        "899",
+        "900",
+        "901",
+        "902",
+        "903",
+        "904",
+        "905",
+        "906"
+      ],
+      "queries": [
+        "رمان",
+        "تکه هایی از یک کل منسجم",
+        "چگونه آدم ها را بخوانیم"
+      ],
+      "scope_fa": "نمونهٔ آگهی‌های کتاب در هر ۳۱ استان ایران",
+      "places_file": "web-static/data/book-places.json"
+    },
+    {
+      "id": "tarjomaan",
+      "name_fa": "ترجمان",
+      "kind": "review_publication",
+      "adapter": "rss",
+      "url": "https://tarjomaan.com/feed/"
+    },
+    {
+      "id": "taaghcheblog",
+      "name_fa": "مجلهٔ طاقچه",
+      "kind": "store_editorial",
+      "adapter": "rss",
+      "url": "https://taaghche.com/blog/feed/"
+    },
+    {
+      "id": "qoqnoosp",
+      "name_fa": "پخش ققنوس",
+      "kind": "distributor",
+      "adapter": "telegram_distributor",
+      "url": "https://t.me/s/qoqnoosp",
+      "website": "https://www.qoqnoosp.com/",
+      "scope_fa": "تازه‌ها و تجدیدچاپ‌های معرفی‌شده در کانال رسمی پخش"
+    },
+    {
+      "id": "cheshmehdis",
+      "name_fa": "پخش چشمه",
+      "kind": "distributor",
+      "adapter": "telegram_distributor",
+      "url": "https://t.me/s/cheshmehdis",
+      "website": "https://www.cheshmehdis.com/",
+      "scope_fa": "تازه‌ها و تجدیدچاپ‌های معرفی‌شده در کانال رسمی پخش"
+    },
+    {
+      "id": "cheshmeh-catalog",
+      "name_fa": "کاتالوگ پخش چشمه",
+      "kind": "catalog",
+      "adapter": "cheshmeh_catalog",
+      "url": "https://cheshmehdis.com/publishers",
+      "site_url": "https://cheshmehdis.com/publishers",
+      "endpoint": "https://server.cheshmehdis.com/api/v1/main-level/publishers/products",
+      "scope_fa": "ناشرها و کتاب‌های موجود در کاتالوگ عمومی پخش چشمه"
+    }
+  ],
+  "candidate_sources": [
+    {
+      "id": "markazi-distribution",
+      "name_fa": "پخش مرکزی",
+      "kind": "distributor",
+      "status": "needs_verified_feed",
+      "evidence": "publisher_mentions",
+      "phone": [
+        "02166950256",
+        "09120190270"
+      ],
+      "note_fa": "تا تأیید کانال یا سایت رسمی، وارد امتیاز رادار نمی‌شود."
+    },
+    {
+      "id": "alborz-books-distribution",
+      "name_fa": "پخش البرز (کتاب)",
+      "kind": "distributor",
+      "status": "needs_disambiguation",
+      "note_fa": "نتایج عمومی عمدتاً به شرکت پخش البرز دارویی/کالایی اشاره دارند؛ منبع کتاب باید جداگانه تأیید شود."
+    },
+    {
+      "id": "gostaresh-distribution",
+      "name_fa": "پخش کتاب گسترش",
+      "kind": "distributor",
+      "status": "needs_verified_feed",
+      "evidence": "publisher_mentions"
+    },
+    {
+      "id": "sedayemoaser",
+      "name_fa": "پخش صدای معاصر",
+      "kind": "distributor",
+      "status": "needs_verified_feed",
+      "evidence": "publisher_mentions"
+    },
+    {
+      "id": "asarbook",
+      "name_fa": "پخش آثار",
+      "kind": "distributor",
+      "status": "needs_verified_feed",
+      "url": "https://asarbook.com/",
+      "evidence": "publisher_mentions"
+    },
+    {
+      "id": "ketabavaran",
+      "name_fa": "کتاب‌آوران",
+      "kind": "distributor",
+      "status": "needs_verified_feed",
+      "evidence": "publisher_mentions"
+    },
+    {
+      "id": "payamemrooz",
+      "name_fa": "پیام امروز",
+      "kind": "distributor",
+      "status": "needs_verified_feed",
+      "evidence": "publisher_mentions"
+    },
+    {
+      "id": "farhang-distribution",
+      "name_fa": "پخش فرهنگ",
+      "kind": "distributor",
+      "status": "needs_verified_feed",
+      "evidence": "publisher_mentions"
+    }
+  ]
+}
