@@ -18,11 +18,25 @@ jobs:
           python-version: '3.11'
       - run: python -m pip install requests beautifulsoup4
       - run: python -m unittest discover -s backend/tests -p 'test_book*.py' -v
+      - run: |
+          node backend/tests/test_book_radar_ui.js
+          node backend/tests/test_book_market_ui.js
       - run: python backend/scripts/collect_book_radar.py --catalog web-static/data/books.json
+      - name: Refresh dated Torob price snapshots
+        env:
+          TOROB_BOOK_LIMIT: '6'
+          TOROB_MCP_GAP: '5.5'
+        run: |
+          mkdir -p backend/public/data backend/public/assets/books
+          cp web-static/data/books.json backend/public/data/books.json
+          cp -R web-static/assets/books/. backend/public/assets/books/
+          python backend/scripts/enrich_books_torob.py
+          cp backend/public/data/books.json web-static/data/books.json
+          cp -R backend/public/assets/books/. web-static/assets/books/
       - run: |
           git config user.name 'Pishkhan Books'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add web-static/data/books.json
+          git add web-static/data/books.json web-static/assets/books/
           if ! git diff --cached --quiet; then
             git commit -m 'Refresh independently collected book radar'
             git push
