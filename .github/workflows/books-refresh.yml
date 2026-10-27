@@ -43,6 +43,7 @@ jobs:
           git add web-static/data/books.json.gz web-static/assets/books/
           if ! git diff --cached --quiet; then
             git commit -m 'Refresh independently collected book radar'
+            git pull --rebase origin main
             git push
           fi
       - uses: actions/upload-artifact@v4
