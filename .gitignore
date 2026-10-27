@@ -2,3 +2,4 @@ site/
 __pycache__/
 *.pyc
 backend/public/
+web-static/data/books.json

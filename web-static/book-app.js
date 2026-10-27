@@ -12,25 +12,8 @@
 let booksCache = null;
 async function loadBooks(){
   if(booksCache) return _curateBookData(booksCache);
-  let d=null;
-  try{d=await getJSON(`${DATA}/books.json`,7000);}catch(_){}
-  if(!d || !Array.isArray(d.books) || !d.books.length){
-    // This 15+ MB legacy JavaScript dataset is a recovery fallback only:
-    // do not download/parse it on every news, figure or article page.
-    if(!window.__PENDAR_BOOKS_FALLBACK_LOADED){
-      try {
-        await new Promise((resolve,reject)=>{
-          const script=document.createElement("script");
-          script.src="data/books.js";
-          script.onload=()=>{window.__PENDAR_BOOKS_FALLBACK_LOADED=true;resolve();};
-          script.onerror=()=>{script.remove();reject(new Error("Books fallback unavailable"));};
-          document.head.appendChild(script);
-        });
-      } catch (_) {}
-    }
-    d=(window.__BOOKS_DATA__ && typeof window.__BOOKS_DATA__==="object")
-      ? window.__BOOKS_DATA__ : {books:[],people:[],publishers:[]};
-  }
+  const d=await getJSON(`${DATA}/books.json`,30000);
+  if(!d || !Array.isArray(d.books) || !d.books.length)throw new Error('Book catalog unavailable');
   booksCache={
     ...d,
     books:Array.isArray(d.books)?d.books:[],
@@ -69,7 +52,7 @@ async function openPublisher(slug, canonicalId=null){
   if(!p){el.innerHTML='<div class="state"><div class="big">ناشر پیدا نشد</div></div>';return}
   const books=_booksForPublisher(d,p);
   el.innerHTML=`<button class="back" onclick="showBooks('publishers')">بازگشت به ناشرها</button>${_bookPublisherProfile(p,books)}${canonicalPub?canonicalStrip(canonicalPub):""}<div class="books-grid">${books.map(_bookCard).join("")}</div>`;
-  document.title=p.name_fa+" | ناشرهای جانِ کتاب";
+  document.title=p.name_fa+" | ناشرهای پیشخوان کتاب";
   setHash(canonicalId?"#/entity/"+encodeURIComponent(canonicalId):"#/publisher/"+encodeURIComponent(slug));
 }
 function _personIdentityNorm(s){

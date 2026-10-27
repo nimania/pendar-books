@@ -1,15 +1,18 @@
 """Build a self-contained Pages artifact and crawlable book entry pages."""
 from pathlib import Path
 import shutil, json, html, re
+from catalog_snapshot import unpack
 
 ROOT = Path(__file__).resolve().parents[2]
 SOURCE = ROOT / 'web-static'
 SITE = ROOT / 'site'
+data = unpack()
 if SITE.exists():
     shutil.rmtree(SITE)
 shutil.copytree(SOURCE, SITE)
+(SITE / 'data/books.json.gz').unlink(missing_ok=True)
+(SITE / 'data/migration-baseline.json').unlink(missing_ok=True)
 template = (SOURCE / 'index.html').read_text()
-data = json.loads((SOURCE / 'data/books.json').read_text())
 assert data.get('books'), 'Empty book catalog'
 urls = ['https://nimania.github.io/pishkhan/']
 for kind, rows in [('book', data['books']), ('publisher', data.get('publishers', [])), ('book-person', data.get('people', []))]:

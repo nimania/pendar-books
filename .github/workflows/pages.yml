@@ -26,6 +26,7 @@ jobs:
         run: |
           for file in web-static/*.js; do node --check "$file"; done
           python backend/scripts/build_site.py
+          node backend/tests/test_book_catalog_ui.js
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

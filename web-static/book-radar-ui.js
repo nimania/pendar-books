@@ -27,12 +27,47 @@ function _bookOverlayRadar(data){
   data.people=[...people.values()];data.publishers=[...publishers.values()];return data;
 }
 function _bookRadarSignals(b){return (b.radar?.signals||[]).filter(r=>{const t=_bookDate(r.observed_at);return t&&Date.now()-t>=0&&Date.now()-t<=2*864e5})}
+// Catalog membership survives an expired trend observation. Only fresh evidence
+// contributes to the score above; archived observations remain browsable.
+let _bookEvidenceHistory=null,_bookEvidenceIndex=new Map();
+function _bookCatalogSignals(b){
+  const history=typeof booksCache!=='undefined'?booksCache?.radar?.history:null;
+  if(history!==_bookEvidenceHistory){
+    _bookEvidenceHistory=history;_bookEvidenceIndex=new Map();
+    for(const row of history||[]){const rows=_bookEvidenceIndex.get(row.slug)||[];rows.push(row);_bookEvidenceIndex.set(row.slug,rows)}
+  }
+  const latest=new Map();
+  for(const r of [...(_bookEvidenceIndex.get(b.slug)||[]),...(b.radar?.signals||[])]){
+    const t=_bookDate(r.observed_at);if(!t||+t>Date.now())continue;
+    const key=[r.source_id,r.kind,r.format,r.list_label].join('|');
+    if(!latest.has(key)||+t>+_bookDate(latest.get(key).observed_at))latest.set(key,r);
+  }
+  const rows=[...latest.values()],sources=typeof booksCache!=='undefined'?booksCache?.radar?.sources||[]:[];
+  const present=new Set(rows.map(r=>r.source_id));
+  for(const link of [...(b.purchase_links||[]),...(b.editions||[]).flatMap(e=>e.purchase_links||[])]){
+    const source=sources.find(s=>_bookNorm(s.name_fa)===_bookNorm(link.store));
+    if(!source||present.has(source.id)||link.exact!==true||!_bookUrl(link.url))continue;
+    const date=_bookDate(link.last_checked);if(date&&+date>Date.now())continue;
+    rows.push({source_id:source.id,kind:'catalog',observed_at:link.last_checked||null});present.add(source.id);
+  }
+  for(const [id,item] of Object.entries(b.source_inventory||{})){
+    const date=_bookDate(item.checked_at);if(present.has(id)||(date&&+date>Date.now()))continue;
+    rows.push({source_id:id,kind:'catalog',observed_at:item.checked_at||null});present.add(id);
+  }
+  return rows;
+}
+function _bookCatalogDate(b){return Math.max(0,..._bookCatalogSignals(b).map(r=>+_bookDate(r.observed_at)))}
+function _bookSourceNote(sourceId){
+  const source=(booksCache?.radar?.sources||[]).find(s=>s.id===sourceId);if(!source)return '';
+  const date=_bookDate(source.last_success_at),fresh=date&&Date.now()-date<=2*864e5;
+  return `<p class="book-method" role="status">کتاب‌های ثبت‌شده از ${esc(source.name_fa)} · آخرین دریافت موفق: ${_bookChecked(source.last_success_at)}${!fresh?' · این فهرست آرشیوی است و موجودی زندهٔ فروشگاه نیست.':source.status!=='ok'?' · دریافت تازه ناموفق بود؛ کتاب‌های قبلی حفظ شده‌اند.':''}</p>`;
+}
 function _bookRadarScore(b){const scores=new Map();for(const r of _bookRadarSignals(b)){const n=(r.kind==='bestseller'?3:1)/(1+Math.max(0,r.position-1)/10);scores.set(r.source_id,Math.max(n,scores.get(r.source_id)||0))}return [...scores.values()].reduce((a,b)=>a+b,0)+Math.max(0,scores.size-1)}
 function _bookRadarSources(b){return [...new Set(_bookRadarSignals(b).map(r=>r.source_id))]}
 function _bookRadarChange(b){return _bookRadarSignals(b).length?Math.max(0,...(b.radar?.weekly_changes||[]).map(r=>r.change)):0}
-function _bookRadarBadge(b){const ids=_bookRadarSources(b);return ids.length?ids.map(_bookSourceIcon).join(' '):b.radar?'آخرین مشاهده: '+_bookChecked((b.radar.signals||[])[0]?.observed_at):`${faN(b.mention_count||0)} اشاره`}
+function _bookRadarBadge(b){const ids=_bookRadarSources(b),last=_bookCatalogDate(b);return ids.length?ids.map(_bookSourceIcon).join(' '):last?'آخرین مشاهده: '+_bookChecked(new Date(last).toISOString()):`${faN(b.mention_count||0)} اشاره`}
 function _bookRadarMatches(b,state){
-  const rows=_bookRadarSignals(b);
+  const rows=_bookCatalogSignals(b);
   if(state.source&&!rows.some(r=>r.source_id===state.source))return false;
   if(state.signal==='bestseller')return rows.some(r=>r.kind==='bestseller');
   if(state.signal==='new_to_store')return rows.some(r=>r.kind==='new_to_store');
