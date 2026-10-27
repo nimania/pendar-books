@@ -11,6 +11,7 @@ for(const file of ['standalone.js','book-curation.js','book-radar-ui.js','book-p
  assert.ok(data.books.length>=3074);
  assert.deepEqual(baseline.book_slugs.filter(s=>!data.books.some(b=>b.slug===s)),[]);
  await ctx.showBooks();
+ for(const book of data.books)assert.ok(ctx._bookCard(book).includes('book-card'),'Book card must render: '+book.slug);
  assert.equal(node('book-result-count').textContent,vm.runInContext('faN',ctx)(data.books.length)+' کتاب');
  for(const source of data.radar.sources.filter(s=>['store','distributor','catalog'].includes(s.kind))){
   const count=vm.runInContext(`booksCache.books.filter(b=>_bookRadarMatches(b,{source:${JSON.stringify(source.id)},signal:'all'})).length`,ctx);
