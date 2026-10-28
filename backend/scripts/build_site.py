@@ -2,14 +2,17 @@
 from pathlib import Path
 import shutil, json, html, re
 from catalog_snapshot import unpack
+from badbadak_mentions import import_mentions
 
 ROOT = Path(__file__).resolve().parents[2]
 SOURCE = ROOT / 'web-static'
 SITE = ROOT / 'site'
 data = unpack()
+data = import_mentions(data, SOURCE / 'data')
 if SITE.exists():
     shutil.rmtree(SITE)
 shutil.copytree(SOURCE, SITE)
+(SITE / 'data/books.json').write_text(json.dumps(data, ensure_ascii=False, separators=(',', ':')))
 (SITE / 'data/books.json.gz').unlink(missing_ok=True)
 (SITE / 'data/migration-baseline.json').unlink(missing_ok=True)
 template = (SOURCE / 'index.html').read_text()

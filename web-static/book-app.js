@@ -22,7 +22,7 @@ async function loadBooks(){
   };
   return _curateBookData(booksCache);
 }
-function _bookBySlug(d,slug){return (d.books||[]).find(x=>String(x.slug)===String(slug))}
+function _bookBySlug(d,slug){return (d.books||[]).find(x=>(String(x.slug)===String(slug)||(x.alias_slugs||[]).includes(slug)))}
 function _toman(v){
   const n=Number(v);
   return Number.isFinite(n)&&n>0 ? n.toLocaleString("fa-IR")+" تومان" : "—";
